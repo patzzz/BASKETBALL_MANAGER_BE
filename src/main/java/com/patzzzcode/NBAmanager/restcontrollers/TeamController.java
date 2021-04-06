@@ -32,6 +32,7 @@ public class TeamController {
                 return new ResponseEntity<Object>("TEAM ALREADY EXIST", HttpStatus.ALREADY_REPORTED);
             } else {
                 Team t = new Team(null, team.getName(), team.getCountry(), 0, 0, 0, 0);
+                teamRepository.save(t);
                 return new ResponseEntity<Object>(t, HttpStatus.CREATED);
             }
         } catch (Exception e) {
