@@ -1,6 +1,7 @@
 package com.patzzzcode.NBAmanager.repositories;
 
-import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
+
+import com.patzzzcode.NBAmanager.bo.Match;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

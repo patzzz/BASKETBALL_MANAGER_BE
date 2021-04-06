@@ -26,7 +26,7 @@ public class PlayerController {
     @RequestMapping(value = "/api/players/createPlayer", method = RequestMethod.POST)
     public ResponseEntity<Object> createPlayer(@RequestBody Player player) {
         try {
-            Player existingPlayer = playerRepository.findByIndentityNumber(player.getIdentityNumber()).orElse(null);
+            Player existingPlayer = playerRepository.findByIdentityNumber(player.getIdentityNumber()).orElse(null);
             if (existingPlayer != null) {
                 return new ResponseEntity<Object>("PLAYER ALREADY EXIST", HttpStatus.ALREADY_REPORTED);
             } else {
