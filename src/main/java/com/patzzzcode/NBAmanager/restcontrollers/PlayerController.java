@@ -32,6 +32,7 @@ public class PlayerController {
             } else {
                 Player p = new Player(null, player.getFirstName(), player.getLastName(), "", 0,
                         player.getIdentityNumber());
+                playerRepository.save(p);
                 return new ResponseEntity<Object>(p, HttpStatus.CREATED);
             }
         } catch (Exception e) {
