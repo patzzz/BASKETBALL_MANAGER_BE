@@ -55,6 +55,22 @@ public class PlayerController {
         }
     }
 
+    @ApiOperation(value = "deletePlayer")
+    @RequestMapping(value = "/api/players/deletePlayer", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deletePlayer(@RequestParam Long playerID) {
+        try {
+            Player existingPlayer = playerRepository.findById(playerID).orElse(null);
+            if (existingPlayer != null) {
+                playerRepository.delete(existingPlayer);
+                return new ResponseEntity<Object>(HttpStatus.GONE);
+            } else {
+                return new ResponseEntity<Object>("PLAYER NOT FOUND", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @ApiOperation(value = "getAllPlayers")
     @RequestMapping(value = "/api/players/getAllPlayers", method = RequestMethod.GET)
     public ResponseEntity<Object> getAllPlayers() {

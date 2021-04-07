@@ -66,4 +66,20 @@ public class TeamController {
             return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @ApiOperation(value = "deleteTeam")
+    @RequestMapping(value = "/api/teams/deleteTeam", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteTeam(@RequestParam Long teamID) {
+        try {
+            Team existingTeam = teamRepository.findById(teamID).orElse(null);
+            if (existingTeam != null) {
+                teamRepository.delete(existingTeam);
+                return new ResponseEntity<Object>(HttpStatus.GONE);
+            } else {
+                return new ResponseEntity<Object>("TEAM NOT FOUND", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
 }
