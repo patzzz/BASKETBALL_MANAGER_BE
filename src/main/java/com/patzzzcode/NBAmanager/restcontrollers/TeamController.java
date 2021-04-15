@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.patzzzcode.NBAmanager.bo.Player;
 import com.patzzzcode.NBAmanager.bo.Team;
+import com.patzzzcode.NBAmanager.bo.TeamPlayer;
+import com.patzzzcode.NBAmanager.repositories.PlayerRepository;
+import com.patzzzcode.NBAmanager.repositories.TeamPlayerRepository;
 import com.patzzzcode.NBAmanager.repositories.TeamRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +22,13 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 public class TeamController {
-    
+
     @Autowired
     private TeamRepository teamRepository;
+    @Autowired
+    private PlayerRepository playerRepository;
+    @Autowired
+    private TeamPlayerRepository teamPlayerRepository;
 
     @ApiOperation(value = "createTeam")
     @RequestMapping(value = "/api/teams/createTeam", method = RequestMethod.POST)
@@ -32,7 +39,6 @@ public class TeamController {
                 return new ResponseEntity<Object>("TEAM ALREADY EXIST", HttpStatus.ALREADY_REPORTED);
             } else {
                 Team t = new Team(null, team.getName(), team.getCountry(), 0, 0, 0, 0);
-                teamRepository.save(t);
                 return new ResponseEntity<Object>(t, HttpStatus.CREATED);
             }
         } catch (Exception e) {
@@ -57,7 +63,7 @@ public class TeamController {
 
     @ApiOperation(value = "getAllTeams")
     @RequestMapping(value = "/api/teams/getAllTeams", method = RequestMethod.GET)
-    public ResponseEntity<Object> getAllPlayers() {
+    public ResponseEntity<Object> getAllTeams() {
         try {
             List<Team> teams = teamRepository.findAll();
             return new ResponseEntity<Object>(teams, HttpStatus.OK);
@@ -67,14 +73,59 @@ public class TeamController {
         }
     }
 
-    @ApiOperation(value = "deleteTeam")
-    @RequestMapping(value = "/api/teams/deleteTeam", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteTeam(@RequestParam Long teamID) {
+    @ApiOperation(value = "getTeamPlayers")
+    @RequestMapping(value = "/api/teams/getTeamPlayers", method = RequestMethod.GET)
+    public ResponseEntity<Object> getTeamPlayers(@RequestParam Long teamID) {
         try {
             Team existingTeam = teamRepository.findById(teamID).orElse(null);
             if (existingTeam != null) {
-                teamRepository.delete(existingTeam);
-                return new ResponseEntity<Object>(HttpStatus.GONE);
+                List<TeamPlayer> players = teamPlayerRepository.findByTeam(existingTeam);
+                return new ResponseEntity<Object>(players, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<Object>("TEAM NOT FOUND", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @ApiOperation(value = "assignPlayerToTeam")
+    @RequestMapping(value = "/api/teams/assignPlayerToTeam", method = RequestMethod.POST)
+    public ResponseEntity<Object> assignPlayerToTeam(@RequestParam Long playerID, @RequestParam Long teamID) {
+        try {
+            Team existingTeam = teamRepository.findById(teamID).orElse(null);
+            if (existingTeam != null) {
+                Player existingPlayer = playerRepository.findById(playerID).orElse(null);
+                if (existingPlayer != null) {
+                    TeamPlayer teamPlayer = new TeamPlayer(null, existingTeam, existingPlayer);
+                    teamPlayerRepository.save(teamPlayer);
+                    return new ResponseEntity<Object>(teamPlayer, HttpStatus.CREATED);
+                } else {
+                    return new ResponseEntity<Object>("PLAYER NOT FOUND", HttpStatus.NOT_FOUND);
+                }
+            } else {
+                return new ResponseEntity<Object>("TEAM NOT FOUND", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @ApiOperation(value = "unAssignPlayerToTeam")
+    @RequestMapping(value = "/api/teams/unAssignPlayerToTeam", method = RequestMethod.POST)
+    public ResponseEntity<Object> unAssignPlayerToTeam(@RequestParam Long playerID, @RequestParam Long teamID) {
+        try {
+            Team existingTeam = teamRepository.findById(teamID).orElse(null);
+            if (existingTeam != null) {
+                Player existingPlayer = playerRepository.findById(playerID).orElse(null);
+                if (existingPlayer != null) {
+                    TeamPlayer player = teamPlayerRepository.findByPlayerAndTeam(existingPlayer, existingTeam)
+                            .orElse(null);
+                    teamPlayerRepository.delete(player);
+                    return new ResponseEntity<Object>("PLAYER WAS UNASSIGNED FROM TEAM", HttpStatus.CREATED);
+                } else {
+                    return new ResponseEntity<Object>("PLAYER NOT FOUND", HttpStatus.NOT_FOUND);
+                }
             } else {
                 return new ResponseEntity<Object>("TEAM NOT FOUND", HttpStatus.NOT_FOUND);
             }
