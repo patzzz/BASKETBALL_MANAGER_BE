@@ -39,6 +39,7 @@ public class TeamController {
                 return new ResponseEntity<Object>("TEAM ALREADY EXIST", HttpStatus.ALREADY_REPORTED);
             } else {
                 Team t = new Team(null, team.getName(), team.getCountry(), 0, 0, 0, 0);
+                teamRepository.save(t);
                 return new ResponseEntity<Object>(t, HttpStatus.CREATED);
             }
         } catch (Exception e) {
@@ -67,7 +68,6 @@ public class TeamController {
         try {
             List<Team> teams = teamRepository.findAll();
             return new ResponseEntity<Object>(teams, HttpStatus.OK);
-
         } catch (Exception e) {
             return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
         }
