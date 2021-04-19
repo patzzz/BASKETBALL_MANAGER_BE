@@ -83,4 +83,18 @@ public class PlayerController {
         }
     }
 
+    @ApiOperation(value = "deleteAllPlayers")
+    @RequestMapping(value = "/api/players/deleteAllPlayers", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteAllPlayers() {
+        try {
+            List<Player> players = playerRepository.findAll();
+            for (Player p : players) {
+                playerRepository.delete(p);
+            }
+            return new ResponseEntity<Object>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

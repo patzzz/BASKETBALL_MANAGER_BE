@@ -89,6 +89,20 @@ public class TeamController {
         }
     }
 
+    @ApiOperation(value = "deleteAllTeams")
+    @RequestMapping(value = "/api/teams/deleteAllTeams", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteAllTeams() {
+        try {
+            List<Team> teams = teamRepository.findAll();
+            for (Team t : teams) {
+                teamRepository.delete(t);
+            }
+            return new ResponseEntity<Object>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @ApiOperation(value = "getTeamPlayers")
     @RequestMapping(value = "/api/teams/getTeamPlayers", method = RequestMethod.GET)
     public ResponseEntity<Object> getTeamPlayers(@RequestParam Long teamID) {
@@ -113,9 +127,17 @@ public class TeamController {
             if (existingTeam != null) {
                 Player existingPlayer = playerRepository.findById(playerID).orElse(null);
                 if (existingPlayer != null) {
-                    TeamPlayer teamPlayer = new TeamPlayer(null, existingTeam, existingPlayer);
-                    teamPlayerRepository.save(teamPlayer);
-                    return new ResponseEntity<Object>(teamPlayer, HttpStatus.CREATED);
+                    TeamPlayer player = teamPlayerRepository.findByPlayerAndTeam(existingPlayer, existingTeam)
+                            .orElse(null);
+                    if (player == null) {
+                        TeamPlayer teamPlayer = new TeamPlayer(null, existingTeam, existingPlayer);
+                        teamPlayerRepository.save(teamPlayer);
+                        return new ResponseEntity<Object>(teamPlayer, HttpStatus.CREATED);
+                    } else {
+                        player.setTeam(existingTeam);
+                        teamPlayerRepository.save(player);
+                        return new ResponseEntity<Object>(player, HttpStatus.OK);
+                    }
                 } else {
                     return new ResponseEntity<Object>("PLAYER NOT FOUND", HttpStatus.NOT_FOUND);
                 }
@@ -145,6 +167,20 @@ public class TeamController {
             } else {
                 return new ResponseEntity<Object>("TEAM NOT FOUND", HttpStatus.NOT_FOUND);
             }
+        } catch (Exception e) {
+            return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @ApiOperation(value = "unassignAllPlayers")
+    @RequestMapping(value = "/api/teams/unassignAllPlayers", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> unassignAllPlayers() {
+        try {
+            List<TeamPlayer> players = teamPlayerRepository.findAll();
+            for (TeamPlayer p : players) {
+                teamPlayerRepository.delete(p);
+            }
+            return new ResponseEntity<Object>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
         }
