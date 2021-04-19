@@ -159,8 +159,12 @@ public class TeamController {
                 if (existingPlayer != null) {
                     TeamPlayer player = teamPlayerRepository.findByPlayerAndTeam(existingPlayer, existingTeam)
                             .orElse(null);
-                    teamPlayerRepository.delete(player);
-                    return new ResponseEntity<Object>("PLAYER WAS UNASSIGNED FROM TEAM", HttpStatus.CREATED);
+                    if (player != null) {
+                        teamPlayerRepository.delete(player);
+                        return new ResponseEntity<Object>("PLAYER WAS UNASSIGNED FROM TEAM", HttpStatus.CREATED);
+                    } else {
+                        return new ResponseEntity<Object>("PLAYER IS NOT ASSIGNED TO TEAM", HttpStatus.CREATED);
+                    }
                 } else {
                     return new ResponseEntity<Object>("PLAYER NOT FOUND", HttpStatus.NOT_FOUND);
                 }
