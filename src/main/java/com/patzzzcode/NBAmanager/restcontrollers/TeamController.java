@@ -185,4 +185,26 @@ public class TeamController {
             return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @ApiOperation(value = "flushDatabase")
+    @RequestMapping(value = "/api/flushDatabase", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> flushDatabase() {
+        try {
+            List<TeamPlayer> playersT = teamPlayerRepository.findAll();
+            for (TeamPlayer p : playersT) {
+                teamPlayerRepository.delete(p);
+            }
+            List<Team> teams = teamRepository.findAll();
+            for (Team t : teams) {
+                teamRepository.delete(t);
+            }
+            List<Player> players = playerRepository.findAll();
+            for (Player p : players) {
+                playerRepository.delete(p);
+            }
+            return new ResponseEntity<Object>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
 }
