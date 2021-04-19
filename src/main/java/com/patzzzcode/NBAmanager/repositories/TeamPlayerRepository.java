@@ -12,5 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TeamPlayerRepository extends JpaRepository<TeamPlayer, Long> {
     Optional<TeamPlayer> findByPlayerAndTeam(Player player, Team team);
 
+    Optional<TeamPlayer> findByPlayer(Player player);
+
     List<TeamPlayer> findByTeam(Team team);
 }

@@ -127,16 +127,14 @@ public class TeamController {
             if (existingTeam != null) {
                 Player existingPlayer = playerRepository.findById(playerID).orElse(null);
                 if (existingPlayer != null) {
-                    TeamPlayer player = teamPlayerRepository.findByPlayerAndTeam(existingPlayer, existingTeam)
-                            .orElse(null);
+                    TeamPlayer player = teamPlayerRepository.findByPlayer(existingPlayer).orElse(null);
                     if (player == null) {
                         TeamPlayer teamPlayer = new TeamPlayer(null, existingTeam, existingPlayer);
                         teamPlayerRepository.save(teamPlayer);
                         return new ResponseEntity<Object>(teamPlayer, HttpStatus.CREATED);
                     } else {
-                        player.setTeam(existingTeam);
-                        teamPlayerRepository.save(player);
-                        return new ResponseEntity<Object>(player, HttpStatus.OK);
+                        return new ResponseEntity<Object>("PLAYER IS ALREADY ASSIGNED TO A TEAM",
+                                HttpStatus.NOT_ACCEPTABLE);
                     }
                 } else {
                     return new ResponseEntity<Object>("PLAYER NOT FOUND", HttpStatus.NOT_FOUND);
@@ -157,8 +155,7 @@ public class TeamController {
             if (existingTeam != null) {
                 Player existingPlayer = playerRepository.findById(playerID).orElse(null);
                 if (existingPlayer != null) {
-                    TeamPlayer player = teamPlayerRepository.findByPlayerAndTeam(existingPlayer, existingTeam)
-                            .orElse(null);
+                    TeamPlayer player = teamPlayerRepository.findByPlayer(existingPlayer).orElse(null);
                     if (player != null) {
                         teamPlayerRepository.delete(player);
                         return new ResponseEntity<Object>("PLAYER WAS UNASSIGNED FROM TEAM", HttpStatus.CREATED);
