@@ -11,7 +11,6 @@ import com.patzzzcode.NBAmanager.repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,7 +29,7 @@ public class MatchControler {
     @ApiOperation(value = "createMatch")
     @RequestMapping(value = "/api/matches/createMatch", method = RequestMethod.POST)
     public ResponseEntity<Object> createTeam(@RequestParam Long homeTeamID, @RequestParam Long awayTeamID,
-            @RequestBody Date matchDate) {
+            @RequestParam Date matchDate) {
         try {
             Team homeTeam = teamRepository.findById(homeTeamID).orElse(null);
             Team awayTeam = teamRepository.findById(awayTeamID).orElse(null);
