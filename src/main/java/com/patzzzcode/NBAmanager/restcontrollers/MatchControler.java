@@ -29,7 +29,7 @@ public class MatchControler {
     @ApiOperation(value = "createMatch")
     @RequestMapping(value = "/api/matches/createMatch", method = RequestMethod.POST)
     public ResponseEntity<Object> createTeam(@RequestParam Long homeTeamID, @RequestParam Long awayTeamID,
-            @RequestParam Date matchDate) {
+            @RequestBody Date matchDate) {
         try {
             Team homeTeam = teamRepository.findById(homeTeamID).orElse(null);
             Team awayTeam = teamRepository.findById(awayTeamID).orElse(null);
