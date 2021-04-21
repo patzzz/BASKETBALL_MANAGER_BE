@@ -131,6 +131,8 @@ public class TeamController {
                     if (player == null) {
                         TeamPlayer teamPlayer = new TeamPlayer(null, existingTeam, existingPlayer);
                         teamPlayerRepository.save(teamPlayer);
+                        existingTeam.setNoOfPLayers(existingTeam.getNoOfPLayers() + 1);
+                        teamRepository.save(existingTeam);
                         return new ResponseEntity<Object>(teamPlayer, HttpStatus.CREATED);
                     } else {
                         return new ResponseEntity<Object>("PLAYER IS ALREADY ASSIGNED TO A TEAM",
@@ -158,6 +160,8 @@ public class TeamController {
                     TeamPlayer player = teamPlayerRepository.findByPlayer(existingPlayer).orElse(null);
                     if (player != null) {
                         teamPlayerRepository.delete(player);
+                        existingTeam.setNoOfPLayers(existingTeam.getNoOfPLayers() - 1);
+                        teamRepository.save(existingTeam);
                         return new ResponseEntity<Object>("PLAYER WAS UNASSIGNED FROM TEAM", HttpStatus.CREATED);
                     } else {
                         return new ResponseEntity<Object>("PLAYER IS NOT ASSIGNED TO TEAM", HttpStatus.CREATED);
