@@ -199,6 +199,10 @@ public class TeamController {
     @RequestMapping(value = "/api/flushDatabase", method = RequestMethod.DELETE)
     public ResponseEntity<Object> flushDatabase() {
         try {
+            List<Match> matches = matchRepository.findAll();
+            for (Match m : matches) {
+                matchRepository.delete(m);
+            }
             List<TeamPlayer> playersT = teamPlayerRepository.findAll();
             for (TeamPlayer p : playersT) {
                 teamPlayerRepository.delete(p);
@@ -210,10 +214,6 @@ public class TeamController {
             List<Player> players = playerRepository.findAll();
             for (Player p : players) {
                 playerRepository.delete(p);
-            }
-            List<Match> matches = matchRepository.findAll();
-            for (Match m : matches) {
-                matchRepository.delete(m);
             }
             return new ResponseEntity<Object>(HttpStatus.OK);
         } catch (Exception e) {
