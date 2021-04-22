@@ -36,6 +36,10 @@ public class MatchControler {
             if (homeTeam != null && awayTeam != null) {
                 Match match = new Match(null, matchDate, homeTeam, awayTeam);
                 matchRepository.save(match);
+                homeTeam.setNoOfGames(homeTeam.getNoOfGames() + 1);
+                awayTeam.setNoOfGames(awayTeam.getNoOfGames() + 1);
+                teamRepository.save(homeTeam);
+                teamRepository.save(awayTeam);
                 return new ResponseEntity<Object>(match, HttpStatus.CREATED);
             } else {
                 return new ResponseEntity<Object>("ONE OF THE TEAMS OR BOTH DOES NOT EXIST", HttpStatus.NOT_FOUND);
@@ -64,6 +68,10 @@ public class MatchControler {
             Match m = matchRepository.findById(matchID).orElse(null);
             if (m != null) {
                 matchRepository.delete(m);
+                m.getAwayTeam().setNoOfGames(m.getAwayTeam().getNoOfGames() + 1);
+                m.getHomeTeam().setNoOfGames(m.getHomeTeam().getNoOfGames() + 1);
+                teamRepository.save(m.getHomeTeam());
+                teamRepository.save(m.getAwayTeam());
                 return new ResponseEntity<Object>(HttpStatus.GONE);
             } else {
                 return new ResponseEntity<Object>(HttpStatus.NOT_FOUND);
