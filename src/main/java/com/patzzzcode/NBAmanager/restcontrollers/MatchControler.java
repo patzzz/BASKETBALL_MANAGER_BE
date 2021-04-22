@@ -57,4 +57,20 @@ public class MatchControler {
         }
     }
 
+    @ApiOperation(value = "deleteMatch")
+    @RequestMapping(value = "/api/matches/deleteMatch", method = RequestMethod.GET)
+    public ResponseEntity<Object> deleteMatch(@RequestParam Long matchID) {
+        try {
+            Match m = matchRepository.findById(matchID).orElse(null);
+            if (m != null) {
+                matchRepository.delete(m);
+                return new ResponseEntity<Object>(HttpStatus.GONE);
+            } else {
+                return new ResponseEntity<Object>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<Object>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

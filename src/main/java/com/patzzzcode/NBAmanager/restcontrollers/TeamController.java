@@ -2,9 +2,11 @@ package com.patzzzcode.NBAmanager.restcontrollers;
 
 import java.util.List;
 
+import com.patzzzcode.NBAmanager.bo.Match;
 import com.patzzzcode.NBAmanager.bo.Player;
 import com.patzzzcode.NBAmanager.bo.Team;
 import com.patzzzcode.NBAmanager.bo.TeamPlayer;
+import com.patzzzcode.NBAmanager.repositories.MatchRepository;
 import com.patzzzcode.NBAmanager.repositories.PlayerRepository;
 import com.patzzzcode.NBAmanager.repositories.TeamPlayerRepository;
 import com.patzzzcode.NBAmanager.repositories.TeamRepository;
@@ -29,6 +31,8 @@ public class TeamController {
     private PlayerRepository playerRepository;
     @Autowired
     private TeamPlayerRepository teamPlayerRepository;
+    @Autowired
+    private MatchRepository matchRepository;
 
     @ApiOperation(value = "createTeam")
     @RequestMapping(value = "/api/teams/createTeam", method = RequestMethod.POST)
@@ -206,6 +210,10 @@ public class TeamController {
             List<Player> players = playerRepository.findAll();
             for (Player p : players) {
                 playerRepository.delete(p);
+            }
+            List<Match> matches = matchRepository.findAll();
+            for (Match m : matches) {
+                matchRepository.delete(m);
             }
             return new ResponseEntity<Object>(HttpStatus.OK);
         } catch (Exception e) {
